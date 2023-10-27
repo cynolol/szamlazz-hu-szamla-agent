@@ -7,7 +7,8 @@ namespace zoparga\SzamlazzHuSzamlaAgent;
  *
  * @package SzamlaAgent
  */
-class SzamlaAgentUtil {
+class SzamlaAgentUtil
+{
 
     /**
      * Alapértelmezetten hozzáadott napok száma
@@ -51,7 +52,8 @@ class SzamlaAgentUtil {
      * @throws SzamlaAgentException
      * @throws \Exception
      */
-    public static function addDaysToDate($count, $date = null) {
+    public static function addDaysToDate($count, $date = null)
+    {
         $newDate = self::getToday();
 
         if (!empty($date)) {
@@ -70,7 +72,8 @@ class SzamlaAgentUtil {
      * @return mixed
      * @throws SzamlaAgentException
      */
-    public static function getDateStr(\DateTime $date, $format = self::DATE_FORMAT_DATE) {
+    public static function getDateStr(\DateTime $date, $format = self::DATE_FORMAT_DATE)
+    {
         switch ($format) {
             case self::DATE_FORMAT_DATE:
                 $result = $date->format('Y-m-d');
@@ -93,7 +96,8 @@ class SzamlaAgentUtil {
      * @return \DateTime
      * @throws \Exception
      */
-    public static function getToday() {
+    public static function getToday()
+    {
         return new \DateTime('now');
     }
 
@@ -103,7 +107,8 @@ class SzamlaAgentUtil {
      * @return string
      * @throws \Exception
      */
-    public static function getTodayStr() {
+    public static function getTodayStr()
+    {
         $data = self::getToday();
         return $data->format('Y-m-d');
     }
@@ -116,10 +121,11 @@ class SzamlaAgentUtil {
      *
      * @return bool
      */
-    public static function isValidDate($date) {
+    public static function isValidDate($date)
+    {
         $parsedDate = \DateTime::createFromFormat('Y-m-d', $date);
 
-        if (\DateTime::getLastErrors()['warning_count'] > 0 || !checkdate($parsedDate->format("m"), $parsedDate->format("d"), $parsedDate->format("Y"))) {
+        if (\DateTime::getLastErrors() || !checkdate($parsedDate->format("m"), $parsedDate->format("d"), $parsedDate->format("Y"))) {
             return false;
         }
 
@@ -137,7 +143,8 @@ class SzamlaAgentUtil {
      *
      * @return bool
      */
-    public static function isNotValidDate($date) {
+    public static function isNotValidDate($date)
+    {
         return !self::isValidDate($date);
     }
 
@@ -152,22 +159,24 @@ class SzamlaAgentUtil {
      * @return string|bool
      * @throws \ReflectionException
      */
-    public static function getXmlFileName($prefix, $name, $entity = null) {
+    public static function getXmlFileName($prefix, $name, $entity = null)
+    {
         if (!empty($name) && !empty($entity)) {
             $name .= '-' . (new \ReflectionClass($entity))->getShortName();
         }
 
         $fileName  = $prefix . '-' . strtolower($name) . '-' . self::getDateTimeWithMilliseconds() . '.xml';
         //return self::getAbsPath(SzamlaAgent::XML_FILE_SAVE_PATH, $fileName);
-        return storage_path('temp/'.$fileName);
+        return storage_path('temp/' . $fileName);
     }
 
 
     /**
      * @return string
      */
-    public static function getDateTimeWithMilliseconds() {
-        return date("YmdHis").substr(microtime(FALSE), 2, 5);
+    public static function getDateTimeWithMilliseconds()
+    {
+        return date("YmdHis") . substr(microtime(FALSE), 2, 5);
     }
 
     /**
@@ -176,7 +185,8 @@ class SzamlaAgentUtil {
      * @param  \SimpleXMLElement $simpleXMLElement
      * @return \DOMDocument
      */
-    public static function formatXml(\SimpleXMLElement $simpleXMLElement) {
+    public static function formatXml(\SimpleXMLElement $simpleXMLElement)
+    {
         $xmlDocument = new \DOMDocument('1.0');
         $xmlDocument->preserveWhiteSpace = false;
         $xmlDocument->formatOutput = true;
@@ -191,7 +201,8 @@ class SzamlaAgentUtil {
      *
      * @return \DOMDocument
      */
-    public static function formatResponseXml($response) {
+    public static function formatResponseXml($response)
+    {
         $xmlDocument = new \DOMDocument('1.0');
         $xmlDocument->preserveWhiteSpace = false;
         $xmlDocument->formatOutput = true;
@@ -206,7 +217,8 @@ class SzamlaAgentUtil {
      *
      * @return array
      */
-    public static function checkValidXml($xmlContent) {
+    public static function checkValidXml($xmlContent)
+    {
         libxml_use_internal_errors(true);
 
         $doc = new \DOMDocument('1.0', 'utf-8');
@@ -225,7 +237,8 @@ class SzamlaAgentUtil {
      *
      * @return bool|string
      */
-    public static function getRealPath($path) {
+    public static function getRealPath($path)
+    {
         if (file_exists($path)) {
             return realpath($path);
         } else {
@@ -239,7 +252,8 @@ class SzamlaAgentUtil {
      *
      * @return bool|string
      */
-    public static function getAbsPath($dir, $fileName = '') {
+    public static function getAbsPath($dir, $fileName = '')
+    {
         $file = self::getBasePath() . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $fileName;
         return self::getRealPath($file);
     }
@@ -247,7 +261,8 @@ class SzamlaAgentUtil {
     /**
      * @return bool|string
      */
-    public static function getBasePath() {
+    public static function getBasePath()
+    {
         if (self::isBlank(self::$basePath)) {
             return self::getRealPath(self::DEFAULT_BASE_PATH);
         } else {
@@ -263,28 +278,32 @@ class SzamlaAgentUtil {
      *
      * @param string $basePath
      */
-    public static function setBasePath($basePath) {
+    public static function setBasePath($basePath)
+    {
         self::$basePath = $basePath;
     }
 
     /**
      * @return string
      */
-    public static function getXmlPath() {
+    public static function getXmlPath()
+    {
         return self::getBasePath() . DIRECTORY_SEPARATOR . SzamlaAgent::XML_FILE_SAVE_PATH;
     }
 
     /**
      * @return string
      */
-    public static function getPdfPath() {
+    public static function getPdfPath()
+    {
         return self::getBasePath() . DIRECTORY_SEPARATOR . SzamlaAgent::PDF_FILE_SAVE_PATH;
     }
 
     /**
      * @return string
      */
-    public static function getLogPath() {
+    public static function getLogPath()
+    {
         return self::getBasePath() . DIRECTORY_SEPARATOR . Log::LOG_PATH;
     }
 
@@ -292,7 +311,8 @@ class SzamlaAgentUtil {
      * @param string $fileName
      * @return string
      */
-    public static function getDefaultAttachmentPath($fileName) {
+    public static function getDefaultAttachmentPath($fileName)
+    {
         return self::getRealPath(self::getBasePath() . DIRECTORY_SEPARATOR . SzamlaAgent::ATTACHMENTS_SAVE_PATH . DIRECTORY_SEPARATOR . $fileName);
     }
 
@@ -303,7 +323,8 @@ class SzamlaAgentUtil {
      *
      * @return false|string
      */
-    public static function toJson($data) {
+    public static function toJson($data)
+    {
         return json_encode($data);
     }
 
@@ -312,8 +333,9 @@ class SzamlaAgentUtil {
      *
      * @return mixed
      */
-    public static function toArray($data) {
-        return json_decode(self::toJson($data),TRUE);
+    public static function toArray($data)
+    {
+        return json_decode(self::toJson($data), TRUE);
     }
 
     /**
@@ -322,7 +344,8 @@ class SzamlaAgentUtil {
      * @return float
      * @throws SzamlaAgentException
      */
-    public static function doubleFormat($value) {
+    public static function doubleFormat($value)
+    {
         if (is_int($value)) {
             $value = doubleval($value);
         }
@@ -343,7 +366,8 @@ class SzamlaAgentUtil {
      *
      * @return bool
      */
-    public static function isBlank($value) {
+    public static function isBlank($value)
+    {
         return (is_null($value) || (is_string($value) && $value !== '0' && (empty($value) || trim($value) == '')));
     }
 
@@ -352,7 +376,8 @@ class SzamlaAgentUtil {
      *
      * @return bool
      */
-    public static function isNotBlank($value) {
+    public static function isNotBlank($value)
+    {
         return !self::isBlank($value);
     }
 
@@ -364,7 +389,8 @@ class SzamlaAgentUtil {
      *
      * @throws SzamlaAgentException
      */
-    public static function checkStrField($field, $value, $required, $class) {
+    public static function checkStrField($field, $value, $required, $class)
+    {
         $errorMsg = "";
         if (isset($value) && !is_string($value)) {
             $errorMsg = "A(z) '{$field}' mező értéke nem szöveg!";
@@ -386,7 +412,8 @@ class SzamlaAgentUtil {
      *
      * @throws SzamlaAgentException
      */
-    public static function checkStrFieldWithRegExp($field, $value, $required, $class, $pattern) {
+    public static function checkStrFieldWithRegExp($field, $value, $required, $class, $pattern)
+    {
         $errorMsg = "";
         self::checkStrField($field, $value, $required, __CLASS__);
 
@@ -407,7 +434,8 @@ class SzamlaAgentUtil {
      *
      * @throws SzamlaAgentException
      */
-    public static function checkIntField($field, $value, $required, $class) {
+    public static function checkIntField($field, $value, $required, $class)
+    {
         $errorMsg = "";
         if (isset($value) && !is_int($value)) {
             $errorMsg = "A(z) '{$field}' mező értéke nem egész szám!";
@@ -428,7 +456,8 @@ class SzamlaAgentUtil {
      *
      * @throws SzamlaAgentException
      */
-    public static function checkDoubleField($field, $value, $required, $class) {
+    public static function checkDoubleField($field, $value, $required, $class)
+    {
         $errorMsg = "";
         if (isset($value) && !is_double($value)) {
             $errorMsg = "A(z) '{$field}' mező értéke nem double!";
@@ -449,7 +478,8 @@ class SzamlaAgentUtil {
      *
      * @throws SzamlaAgentException
      */
-    public static function checkDateField($field, $value, $required, $class) {
+    public static function checkDateField($field, $value, $required, $class)
+    {
         $errorMsg = "";
         if (isset($value) && self::isNotValidDate($value)) {
             if ($required) {
@@ -472,7 +502,8 @@ class SzamlaAgentUtil {
      *
      * @throws SzamlaAgentException
      */
-    public static function checkBoolField($field, $value, $required, $class) {
+    public static function checkBoolField($field, $value, $required, $class)
+    {
         $errorMsg = "";
         if (isset($value) && is_bool($value) === false) {
             if ($required) {
@@ -492,7 +523,8 @@ class SzamlaAgentUtil {
      *
      * @return string
      */
-    public static function getRequiredFieldErrMsg($field) {
+    public static function getRequiredFieldErrMsg($field)
+    {
         return "A(z) '{$field}' kötelező mező, de nincs beállítva az értéke!";
     }
 
@@ -501,7 +533,8 @@ class SzamlaAgentUtil {
      *
      * @return bool
      */
-    public static function isNotNull($value) {
+    public static function isNotNull($value)
+    {
         return (null !== $value);
     }
 
@@ -510,7 +543,8 @@ class SzamlaAgentUtil {
      * @param string            $name
      * @param array             $data
      */
-    public static function addChildArray(\SimpleXMLElement $xmlNode, $name, $data) {
+    public static function addChildArray(\SimpleXMLElement $xmlNode, $name, $data)
+    {
         $node = $xmlNode->addChild($name);
 
         foreach ($data as $key => $value) {
@@ -528,7 +562,8 @@ class SzamlaAgentUtil {
      * @param  \SimpleXMLElement $xmlNode
      * @return \SimpleXMLElement $xmlNode
      */
-    public static function removeNamespaces(\SimpleXMLElement $xmlNode) {
+    public static function removeNamespaces(\SimpleXMLElement $xmlNode)
+    {
         $xmlString = $xmlNode->asXML();
         $cleanedXmlString = preg_replace('/(<\/|<)[a-z0-9]+:([a-z0-9]+[ =>])/i', '$1$2', $xmlString);
         $cleanedXmlNode = simplexml_load_string($cleanedXmlString);
@@ -541,7 +576,8 @@ class SzamlaAgentUtil {
      * @return mixed
      * @throws SzamlaAgentException
      */
-    public static function isValidJSON($string) {
+    public static function isValidJSON($string)
+    {
         // decode the JSON data
         $result = json_decode($string);
         // switch and check possible JSON errors
@@ -561,15 +597,15 @@ class SzamlaAgentUtil {
             case JSON_ERROR_SYNTAX:
                 $error = 'Syntax error, malformed JSON.';
                 break;
-            // PHP >= 5.3.3
+                // PHP >= 5.3.3
             case JSON_ERROR_UTF8:
                 $error = 'Malformed UTF-8 characters, possibly incorrectly encoded.';
                 break;
-            // PHP >= 5.5.0
+                // PHP >= 5.5.0
             case JSON_ERROR_RECURSION:
                 $error = 'One or more recursive references in the value to be encoded.';
                 break;
-            // PHP >= 5.5.0
+                // PHP >= 5.5.0
             case JSON_ERROR_INF_OR_NAN:
                 $error = 'One or more NAN or INF values in the value to be encoded.';
                 break;
@@ -591,21 +627,24 @@ class SzamlaAgentUtil {
     /**
      * Törli az xml mappából az összes xml fájlt
      */
-    public static function emptyXmlDir() {
+    public static function emptyXmlDir()
+    {
         self::deleteFilesFromDir(realpath(self::getXmlPath()), 'xml');
     }
 
     /**
      * Törli a pdf mappából az összes pdf fájlt
      */
-    public static function emptyPdfDir() {
+    public static function emptyPdfDir()
+    {
         self::deleteFilesFromDir(realpath(self::getPdfPath()), 'pdf');
     }
 
     /**
      * Törli a log mappából az összes log fájlt
      */
-    public static function emptyLogDir() {
+    public static function emptyLogDir()
+    {
         self::deleteFilesFromDir(realpath(self::getLogPath()), 'log');
     }
 
@@ -616,16 +655,16 @@ class SzamlaAgentUtil {
      * @param string $dir
      * @param string $extension
      */
-    protected static function deleteFilesFromDir($dir, $extension = null) {
+    protected static function deleteFilesFromDir($dir, $extension = null)
+    {
         if (self::isNotBlank($dir) && is_dir($dir)) {
             $filter = (self::isNotBlank($extension) ? '*.' . $extension  : '*');
             $files = glob($dir . DIRECTORY_SEPARATOR . $filter);
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 if (is_file($file)) {
                     unlink($file);
                 }
             }
         }
     }
-
 }

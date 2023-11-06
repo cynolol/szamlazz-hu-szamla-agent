@@ -12,6 +12,7 @@ use zoparga\SzamlazzHuSzamlaAgent\SzamlaAgent;
 use zoparga\SzamlazzHuSzamlaAgent\SzamlaAgentException;
 use zoparga\SzamlazzHuSzamlaAgent\SzamlaAgentRequest;
 use zoparga\SzamlazzHuSzamlaAgent\SzamlaAgentUtil;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * A Számla Agent választ kezelő osztály
@@ -194,7 +195,7 @@ class SzamlaAgentResponse
                             $this->setPdfFile($pdfData);
 
                             if ($agent->isPdfFileSave()) {
-                                $file = file_put_contents($this->getPdfFileName(), $pdfData);
+                                $file = Storage::disk('public')->put('szamlazzhu/' . $this->getDocumentNumber() . '.pdf', $pdfData);
 
                                 if ($file !== false) {
                                     $agent->writeLog(SzamlaAgentException::PDF_FILE_SAVE_SUCCESS . ': ' . $this->getPdfFileName(), Log::LOG_LEVEL_DEBUG);
@@ -263,9 +264,11 @@ class SzamlaAgentResponse
 
         switch ($type) {
             case self::RESULT_AS_XML:
-            case self::RESULT_AS_TAXPAYER_XML: $postfix = "-xml";
+            case self::RESULT_AS_TAXPAYER_XML:
+                $postfix = "-xml";
                 break;
-            case self::RESULT_AS_TEXT:         $postfix = "-text";
+            case self::RESULT_AS_TEXT:
+                $postfix = "-text";
                 break;
             default:
                 throw new SzamlaAgentException(SzamlaAgentException::RESPONSE_TYPE_NOT_EXISTS . " ($type)");
@@ -319,7 +322,7 @@ class SzamlaAgentResponse
     protected function getPdfFileAbsPath($pdfFileName)
     {
         //return SzamlaAgentUtil::getAbsPath(SzamlaAgent::PDF_FILE_SAVE_PATH, $pdfFileName);
-        return storage_path('temp/'.$pdfFileName);
+        return storage_path('temp/' . $pdfFileName);
     }
 
     /**
@@ -334,7 +337,7 @@ class SzamlaAgentResponse
         if (SzamlaAgentUtil::isNotBlank($pdfFileName)) {
             header("Content-type:application/pdf");
             header("Content-Disposition:attachment;filename={$pdfFileName}.pdf");
-            readfile($this->getPdfFileAbsPath($pdfFileName));
+            //readfile($this->getPdfFileAbsPath($pdfFileName));
             return true;
         }
         return false;
